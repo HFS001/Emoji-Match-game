@@ -1,4 +1,4 @@
-// COMMIT: Initialize game variables and UI references
+//  Initialize game variables and UI references
 const grid = document.getElementById('grid');
 const scoreDisplay = document.getElementById('score');
 const width = 8;
@@ -74,19 +74,19 @@ function createBoard() {
     squares.push(square);
   }
 
-  // 🖱️ Desktop Events
+  //  Desktop Events
   squares.forEach(square => square.addEventListener('dragstart', dragStart));
   squares.forEach(square => square.addEventListener('dragend', dragEnd));
   squares.forEach(square => square.addEventListener('dragover', e => e.preventDefault()));
   squares.forEach(square => square.addEventListener('dragenter', e => e.preventDefault()));
   squares.forEach(square => square.addEventListener('drop', dragDrop));
 
-  // 📱 Mobile Touch Events
+  // Mobile Touch Events
   squares.forEach(square => square.addEventListener('touchstart', handleTouchStart));
   squares.forEach(square => square.addEventListener('touchend', handleTouchEnd));
 }
 
-// COMMIT: Drag and Drop Logic
+//  Drag and Drop Logic
 let colorBeingDragged, colorBeingReplaced, squareIdBeingDragged, squareIdBeingReplaced;
 
 function dragStart() {
@@ -118,7 +118,7 @@ function dragEnd() {
   }
 }
 
-// COMMIT: Touch Interaction for Mobile Devices
+//Touch Interaction for Mobile Devices
 function handleTouchStart(e) {
   touchStartId = parseInt(this.id);
 }
@@ -151,7 +151,7 @@ function handleTouchEnd(e) {
 
 
 
-// COMMIT: Game Logic Functions
+//  Game Logic Functions
 function checkRowForThree() {
   for (let i = 0; i < 62; i++) {
     let rowOfThree = [i, i + 1, i + 2];
@@ -194,7 +194,7 @@ function moveDown() {
   }
 }
 
-// COMMIT: Display Player Name
+//  Display Player Name
 const playerName = sessionStorage.getItem('playerName');
 if (playerName) {
   const nameDisplay = document.getElementById('player-name-display');
@@ -203,16 +203,16 @@ if (playerName) {
   }
 }
 
-// COMMIT: Restart Button
+//  Restart Button
 restartButton.addEventListener('click', () => location.reload());
 
-// COMMIT: Auto-start Game (optional)
+//  Auto-start Game (optional)
 if (sessionStorage.getItem('startImmediately') === 'true') {
   sessionStorage.removeItem('startImmediately');
   window.addEventListener('load', startGame);
 }
 
-// COMMIT: Restart Game Function
+// Restart Game Function
 function restartGame() {
   const modalElement = document.getElementById('gameOverModal');
   const modalInstance = bootstrap.Modal.getInstance(modalElement);
@@ -255,7 +255,7 @@ function restartGame() {
   }, 100);
 }
 
-// COMMIT: Return to Welcome Screen
+//  Return to Welcome Screen
 function showWelcome() {
   document.getElementById('gameScreen').style.display = 'none';
   document.getElementById('welcomeScreen').style.display = 'block';
