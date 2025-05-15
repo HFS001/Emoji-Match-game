@@ -74,7 +74,7 @@ body::before {
   }
 
   h1.display-4, h1.display-5 {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
 }
 
   .score, .timer, #player-name-display {
