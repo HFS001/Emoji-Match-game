@@ -133,15 +133,23 @@ function handleTouchEnd(e) {
       touchEndId === touchStartId + width;
 
     if (isNeighbor) {
+      // Swap
       const color1 = squares[touchStartId].style.backgroundImage;
       const color2 = squares[touchEndId].style.backgroundImage;
       squares[touchStartId].style.backgroundImage = color2;
       squares[touchEndId].style.backgroundImage = color1;
-    }
 
-    touchStartId = null;
+      // Force check immediately
+      setTimeout(() => {
+        moveDown();
+        checkRowForThree();
+        checkColumnForThree();
+      }, 200);
+    }
   }
+  touchStartId = null;
 }
+
 
 // COMMIT: Game Logic Functions
 function checkRowForThree() {
