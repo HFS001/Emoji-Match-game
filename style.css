@@ -1,57 +1,82 @@
-body {
-  background-color: #fff9e6;
-  font-family: 'Segoe UI', sans-serif;
-  text-align: center;
-  margin: 0;
-}
 
-h1 {
-  font-weight: 700;
-  color: #e67300;
-}
-
-#welcomeScreen p {
-  font-size: 1.2rem;
-}
-
-#player-name-display {
-  font-weight: 600;
-  color: #3c3c3c;
-}
-
-.score, .timer {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-/* Game Grid */
 .grid {
   display: grid;
   grid-template-columns: repeat(8, 50px);
-  gap: 5px;
+  grid-gap: 5px;
   justify-content: center;
-  margin: 20px auto;
+  margin-top: 20px;
+  max-width: 100%;
+  margin-bottom: 20px;
 }
+
+
 
 .grid div {
   width: 50px;
   height: 50px;
-  border-radius: 12px;
   background-size: cover;
   background-position: center;
-  background-color: #fffde7;
-  border: 1px solid #ddd;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
-/* Buttons */
-button {
-  font-weight: 500;
   border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Hide restart button by default */
-#restart-button {
-  display: none;
+body {
+  position: relative;
+  min-height: 100vh;
+  background-image: url('images/backround2.avif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4); /* تیره شدن */
+  backdrop-filter: blur(3px);          /* حالت بلور */
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1; /* برای اینکه روی پس‌زمینه بماند */
+}
+
+
+#gameScreen, #welcomeScreen {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+@media (max-width: 768px) {
+  .grid div {
+    width: 36px;
+    height: 36px;
+  }
+
+  #gameScreen, #welcomeScreen {
+    max-width: 95%;
+    padding: 20px;
+  }
+
+  h1.display-4, h1.display-5 {
+    font-size: 1.6rem;
+  }
+
+  .score, .timer, #player-name-display {
+    font-size: 1rem;
+  }
+
+  #startGameBtn, #start-button, #restart-button, #back-button {
+    font-size: 0.9rem;
+    padding: 10px 16px;
+  }
 }

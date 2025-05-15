@@ -16,6 +16,8 @@ let score = 0;
 let timeLeft = 60;
 let timerInterval;
 let logicInterval;
+let touchStartId = null; // برای لمس در گوشی
+
 
 const timerDisplay = document.getElementById('timer');
 const restartButton = document.getElementById('restart-button');
@@ -56,6 +58,18 @@ function startGame() {
       modal.show();
     }
   }, 1000);
+
+    // فعال‌سازی Drag برای دسکتاپ
+  squares.forEach(square => square.addEventListener('dragstart', dragStart));
+  squares.forEach(square => square.addEventListener('dragend', dragEnd));
+  squares.forEach(square => square.addEventListener('dragover', e => e.preventDefault()));
+  squares.forEach(square => square.addEventListener('dragenter', e => e.preventDefault()));
+  squares.forEach(square => square.addEventListener('drop', dragDrop));
+
+  // فعال‌سازی لمس برای موبایل
+  squares.forEach(square => square.addEventListener('touchstart', handleTouchStart));
+  squares.forEach(square => square.addEventListener('touchend', handleTouchEnd));
+
 
   // Start game logic
   logicInterval = setInterval(() => {
@@ -260,6 +274,21 @@ function showWelcome() {
   timeLeft = 60;
   scoreDisplay.innerText = 0;
   timerDisplay.innerText = 60;
+}
+
+function handleTouchStart(e) {
+  touchStartId = parseInt(this.id);
+}
+
+function handleTouchEnd(e) {
+  const touchEndId = parseInt(this.id);
+  if (touchStartId !== null && touchEndId !== touchStartId) {
+    const color1 = squares[touchStartId].style.backgroundImage;
+    const color2 = squares[touchEndId].style.backgroundImage;
+    squares[touchStartId].style.backgroundImage = color2;
+    squares[touchEndId].style.backgroundImage = color1;
+    touchStartId = null;
+  }
 }
 
 
