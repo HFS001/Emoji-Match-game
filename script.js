@@ -16,19 +16,18 @@ let score = 0;
 let timeLeft = 60;
 let timerInterval;
 let logicInterval;
-let touchStartId = null; // برای لمس در گوشی
+let touchStartId = null;
 
-
+// UI References
 const timerDisplay = document.getElementById('timer');
 const restartButton = document.getElementById('restart-button');
 const startButton = document.getElementById('start-button');
 
 restartButton.style.display = 'none';
 
-// Attach one clean event listener to start game
 startButton.addEventListener('click', startGame);
 
-// Main game function
+// COMMIT: Start the Game
 function startGame() {
   startButton.style.display = 'none';
   restartButton.style.display = 'none';
@@ -41,7 +40,6 @@ function startGame() {
 
   createBoard();
 
-  // Start timer
   timerInterval = setInterval(() => {
     timeLeft--;
     timerDisplay.innerText = timeLeft;
@@ -50,15 +48,21 @@ function startGame() {
       clearInterval(timerInterval);
       clearInterval(logicInterval);
 
-      const scoreValue = score;
-      const message = `🎉 Well done! Your final score is ${scoreValue}. Want to play again or exit?`;
+      const message = `🎉 Well done! Your final score is ${score}. Want to play again or exit?`;
       document.getElementById("finalScoreMessage").innerText = message;
-
       const modal = new bootstrap.Modal(document.getElementById('gameOverModal'));
       modal.show();
     }
   }, 1000);
 
+  logicInterval = setInterval(() => {
+    moveDown();
+    checkRowForThree();
+    checkColumnForThree();
+  }, 100);
+}
+
+// COMMIT: Create Grid and Attach Events
 function createBoard() {
   for (let i = 0; i < width * width; i++) {
     const square = document.createElement('div');
@@ -70,50 +74,19 @@ function createBoard() {
     squares.push(square);
   }
 
-  // 🖱️ Desktop: Drag & Drop
+  // 🖱️ Desktop Events
   squares.forEach(square => square.addEventListener('dragstart', dragStart));
   squares.forEach(square => square.addEventListener('dragend', dragEnd));
   squares.forEach(square => square.addEventListener('dragover', e => e.preventDefault()));
   squares.forEach(square => square.addEventListener('dragenter', e => e.preventDefault()));
   squares.forEach(square => square.addEventListener('drop', dragDrop));
 
-  // 📱 Mobile: Touch support
+  // 📱 Mobile Touch Events
   squares.forEach(square => square.addEventListener('touchstart', handleTouchStart));
   squares.forEach(square => square.addEventListener('touchend', handleTouchEnd));
 }
 
-
-  // Start game logic
-  logicInterval = setInterval(() => {
-    moveDown();
-    checkRowForThree();
-    checkColumnForThree();
-  }, 100);
-
-  // Enable drag-and-drop after a short delay
-  setTimeout(() => {
-    squares.forEach(square => square.addEventListener('dragstart', dragStart));
-    squares.forEach(square => square.addEventListener('dragend', dragEnd));
-    squares.forEach(square => square.addEventListener('dragover', e => e.preventDefault()));
-    squares.forEach(square => square.addEventListener('dragenter', e => e.preventDefault()));
-    squares.forEach(square => square.addEventListener('drop', dragDrop));
-  }, 200);
-}
-
-// COMMIT: Create board of draggable squares with random emojis
-function createBoard() {
-  for (let i = 0; i < width * width; i++) {
-    const square = document.createElement('div');
-    square.setAttribute('draggable', true);
-    square.setAttribute('id', i);
-    let randomColor = Math.floor(Math.random() * candyColors.length);
-    square.style.backgroundImage = candyColors[randomColor];
-    grid.appendChild(square);
-    squares.push(square);
-  }
-}
-
-// COMMIT: Drag and drop functionality
+// COMMIT: Drag and Drop Logic
 let colorBeingDragged, colorBeingReplaced, squareIdBeingDragged, squareIdBeingReplaced;
 
 function dragStart() {
@@ -145,10 +118,35 @@ function dragEnd() {
   }
 }
 
-// COMMIT: Check and clear rows and columns of 3
+// COMMIT: Touch Interaction for Mobile Devices
+function handleTouchStart(e) {
+  touchStartId = parseInt(this.id);
+}
+
+function handleTouchEnd(e) {
+  const touchEndId = parseInt(this.id);
+  if (touchStartId !== null && touchEndId !== touchStartId) {
+    const isNeighbor =
+      touchEndId === touchStartId - 1 ||
+      touchEndId === touchStartId + 1 ||
+      touchEndId === touchStartId - width ||
+      touchEndId === touchStartId + width;
+
+    if (isNeighbor) {
+      const color1 = squares[touchStartId].style.backgroundImage;
+      const color2 = squares[touchEndId].style.backgroundImage;
+      squares[touchStartId].style.backgroundImage = color2;
+      squares[touchEndId].style.backgroundImage = color1;
+    }
+
+    touchStartId = null;
+  }
+}
+
+// COMMIT: Game Logic Functions
 function checkRowForThree() {
   for (let i = 0; i < 62; i++) {
-    let rowOfThree = [i, i+1, i+2];
+    let rowOfThree = [i, i + 1, i + 2];
     let decidedColor = squares[i].style.backgroundImage;
     const isBlank = decidedColor === '';
     if (rowOfThree.every(index => squares[index].style.backgroundImage === decidedColor && !isBlank)) {
@@ -161,7 +159,7 @@ function checkRowForThree() {
 
 function checkColumnForThree() {
   for (let i = 0; i < 47; i++) {
-    let columnOfThree = [i, i+width, i+width*2];
+    let columnOfThree = [i, i + width, i + width * 2];
     let decidedColor = squares[i].style.backgroundImage;
     const isBlank = decidedColor === '';
     if (columnOfThree.every(index => squares[index].style.backgroundImage === decidedColor && !isBlank)) {
@@ -172,7 +170,6 @@ function checkColumnForThree() {
   }
 }
 
-// COMMIT: Move emojis down and refill blank spots
 function moveDown() {
   for (let i = 0; i < 56; i++) {
     if (squares[i + width].style.backgroundImage === '') {
@@ -189,7 +186,7 @@ function moveDown() {
   }
 }
 
-// COMMIT: Display player's name
+// COMMIT: Display Player Name
 const playerName = sessionStorage.getItem('playerName');
 if (playerName) {
   const nameDisplay = document.getElementById('player-name-display');
@@ -198,29 +195,23 @@ if (playerName) {
   }
 }
 
-// COMMIT: Restart game using dedicated button
+// COMMIT: Restart Button
 restartButton.addEventListener('click', () => location.reload());
 
-// COMMIT: Automatically start game if flag is set
+// COMMIT: Auto-start Game (optional)
 if (sessionStorage.getItem('startImmediately') === 'true') {
   sessionStorage.removeItem('startImmediately');
   window.addEventListener('load', startGame);
 }
 
-//COMMIT: Functions for modal buttons
+// COMMIT: Restart Game Function
 function restartGame() {
-  // 👇 Close the Bootstrap modal first
   const modalElement = document.getElementById('gameOverModal');
   const modalInstance = bootstrap.Modal.getInstance(modalElement);
-  if (modalInstance) {
-    modalInstance.hide(); //  hide the modal manually
-  }
+  if (modalInstance) modalInstance.hide();
 
-  // 🧹 Clear intervals
   clearInterval(timerInterval);
   clearInterval(logicInterval);
-
-  // Reset variables
   score = 0;
   timeLeft = 60;
   scoreDisplay.innerText = 0;
@@ -228,16 +219,13 @@ function restartGame() {
   grid.innerHTML = "";
   squares.length = 0;
 
-  //  Display player name again
   const name = sessionStorage.getItem("playerName");
   if (name) {
     document.getElementById("player-name-display").innerText = `🎉 Player: ${name}`;
   }
 
-  // Rebuild board
   createBoard();
 
-  //Restart timer
   timerInterval = setInterval(() => {
     timeLeft--;
     timerDisplay.innerText = timeLeft;
@@ -245,64 +233,31 @@ function restartGame() {
     if (timeLeft === 0) {
       clearInterval(timerInterval);
       clearInterval(logicInterval);
-      const scoreValue = score;
-      const message = `🎉 Well done! Your final score is ${scoreValue}. Want to play again or exit?`;
+      const message = `🎉 Well done! Your final score is ${score}. Want to play again or exit?`;
       document.getElementById("finalScoreMessage").innerText = message;
-
       const modal = new bootstrap.Modal(document.getElementById('gameOverModal'));
       modal.show();
     }
   }, 1000);
 
-  // Restart logic loop
   logicInterval = setInterval(() => {
     moveDown();
     checkRowForThree();
     checkColumnForThree();
   }, 100);
-
-  // Reattach drag-and-drop
-  setTimeout(() => {
-    squares.forEach(square => square.addEventListener('dragstart', dragStart));
-    squares.forEach(square => square.addEventListener('dragend', dragEnd));
-    squares.forEach(square => square.addEventListener('dragover', e => e.preventDefault()));
-    squares.forEach(square => square.addEventListener('dragenter', e => e.preventDefault()));
-    squares.forEach(square => square.addEventListener('drop', dragDrop));
-  }, 200);
 }
 
-
+// COMMIT: Return to Welcome Screen
 function showWelcome() {
   document.getElementById('gameScreen').style.display = 'none';
   document.getElementById('welcomeScreen').style.display = 'block';
-
-  clearInterval(timerInterval); // stop timer
-  clearInterval(logicInterval); //stop logic
-
-  grid.innerHTML = ""; // ✅ clear board
+  clearInterval(timerInterval);
+  clearInterval(logicInterval);
+  grid.innerHTML = "";
   squares = [];
-  sessionStorage.clear(); // ✅ clear player name
+  sessionStorage.clear();
   score = 0;
   timeLeft = 60;
   scoreDisplay.innerText = 0;
   timerDisplay.innerText = 60;
 }
-
-function handleTouchStart(e) {
-  touchStartId = parseInt(this.id);
-}
-
-function handleTouchEnd(e) {
-  const touchEndId = parseInt(this.id);
-  if (touchStartId !== null && touchEndId !== touchStartId) {
-    const color1 = squares[touchStartId].style.backgroundImage;
-    const color2 = squares[touchEndId].style.backgroundImage;
-    squares[touchStartId].style.backgroundImage = color2;
-    squares[touchEndId].style.backgroundImage = color1;
-    touchStartId = null;
-  }
-}
-
-
-
-
