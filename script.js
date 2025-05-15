@@ -59,16 +59,28 @@ function startGame() {
     }
   }, 1000);
 
-    // فعال‌سازی Drag برای دسکتاپ
+function createBoard() {
+  for (let i = 0; i < width * width; i++) {
+    const square = document.createElement('div');
+    square.setAttribute('draggable', true);
+    square.setAttribute('id', i);
+    let randomColor = Math.floor(Math.random() * candyColors.length);
+    square.style.backgroundImage = candyColors[randomColor];
+    grid.appendChild(square);
+    squares.push(square);
+  }
+
+  // 🖱️ Desktop: Drag & Drop
   squares.forEach(square => square.addEventListener('dragstart', dragStart));
   squares.forEach(square => square.addEventListener('dragend', dragEnd));
   squares.forEach(square => square.addEventListener('dragover', e => e.preventDefault()));
   squares.forEach(square => square.addEventListener('dragenter', e => e.preventDefault()));
   squares.forEach(square => square.addEventListener('drop', dragDrop));
 
-  // فعال‌سازی لمس برای موبایل
+  // 📱 Mobile: Touch support
   squares.forEach(square => square.addEventListener('touchstart', handleTouchStart));
   squares.forEach(square => square.addEventListener('touchend', handleTouchEnd));
+}
 
 
   // Start game logic
