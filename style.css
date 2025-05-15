@@ -18,7 +18,9 @@
   background-position: center;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  touch-action: manipulation; /*  این خط جدید */
 }
+
 
 body {
   position: relative;
@@ -63,18 +65,17 @@ body::before {
   }
 
   .grid div {
-    width: 32px;
-    height: 32px;
+    width: 32px !important; /* 👈 حتماً با !important */
+    height: 32px !important;
   }
-
   #gameScreen, #welcomeScreen {
     max-width: 95%;
     padding: 20px;
   }
 
   h1.display-4, h1.display-5 {
-    font-size: 1.4rem;
-  }
+  font-size: 1.2rem;
+}
 
   .score, .timer, #player-name-display {
     font-size: 0.9rem;
